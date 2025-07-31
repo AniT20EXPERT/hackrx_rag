@@ -3,3 +3,14 @@ uvicorn==0.35.0
 python-dotenv==1.1.1
 pydantic==2.11.7
 requests==2.32.4
+groq==0.30.0
+langchain==0.3.27
+nltk==3.9.1
+numpy>=1.26.0
+pinecone==7.3.0
+sentence-transformers==5.0.0
+PyMuPDF==1.26.3
+transformers>=4.30.0
+torch>=2.0.0
+setuptools
+wheel
