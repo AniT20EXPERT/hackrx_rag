@@ -1,3 +1,6 @@
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
+
 import os
 from fastapi import FastAPI, HTTPException, Request, Header, Depends
 from pydantic import BaseModel
