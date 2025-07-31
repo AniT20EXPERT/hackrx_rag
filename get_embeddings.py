@@ -1,38 +1,45 @@
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from sentence_transformers import SentenceTransformer
 from typing import List, Tuple
 import numpy as np
 import nltk
 import os
 from nltk.tokenize import sent_tokenize
 
-
-
-# def split_text(text: str):
-#     splitter = RecursiveCharacterTextSplitter(chunk_size=700, chunk_overlap=200)
-#     return splitter.split_text(text)
-
-
-
-
+# Try to load the model but handle failures gracefully
+try:
+    from sentence_transformers import SentenceTransformer
+    print("Loading SentenceTransformer model...")
+    embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+    print("Model loaded successfully!")
+except Exception as e:
+    print(f"Error loading SentenceTransformer: {e}")
+    embedding_model = None
 
 def split_text(text: str) -> List[str]:
     """
     Use NLTK's punkt tokenizer for better sentence detection.
-    Requires: pip install nltk
     """
-    import nltk
-    from nltk.tokenize import sent_tokenize
-
     max_chunk_size = 700
 
-    # Download punkt tokenizer if not already present
+    # Set NLTK data path
+    nltk_data_paths = [
+        '/opt/render/project/src/nltk_data',
+        os.path.expanduser('~/nltk_data'),
+        '/usr/share/nltk_data',
+        '/usr/local/share/nltk_data'
+    ]
+    
+    for path in nltk_data_paths:
+        if os.path.exists(path):
+            nltk.data.path.append(path)
+    
+    # Try to use punkt tokenizer
     try:
-        nltk.data.find('tokenizers/punkt')
+        sentences = sent_tokenize(text)
     except LookupError:
-        nltk.download('punkt')
-
-    sentences = sent_tokenize(text)
+        print("NLTK punkt not found, falling back to simple split")
+        # Fallback to simple sentence splitting
+        sentences = text.replace('! ', '!|').replace('. ', '.|').replace('? ', '?|').split('|')
 
     chunks = []
     current_chunk = []
@@ -52,31 +59,28 @@ def split_text(text: str) -> List[str]:
 
     return chunks
 
-
-
-
-
-# Load the model once (not inside the function for efficiency)
-embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
-
 def get_embeddings_batch(chunks: List[str]) -> List[Tuple[str, List[float]]]:
     """
     Batch version - processes all chunks at once for maximum efficiency.
     """
     if not chunks:
         return []
+    
+    if embedding_model is None:
+        raise RuntimeError("Embedding model not loaded")
 
     # Process all chunks in one call (very efficient)
     embeddings_array = embedding_model.encode(
         chunks,
         batch_size=32,  # Process 32 chunks at a time
-        show_progress_bar=True,  # Show progress for large batches
+        show_progress_bar=False,  # Disable progress bar for deployment
         convert_to_tensor=False  # Return as numpy arrays
     )
 
     # Return
     return [(chunk, embedding.tolist()) for chunk, embedding in zip(chunks, embeddings_array)]
 
-
 def get_question_embedding(question: str) -> List[float]:
+    if embedding_model is None:
+        raise RuntimeError("Embedding model not loaded")
     return embedding_model.encode(question).tolist()
