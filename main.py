@@ -1,7 +1,14 @@
 import os
-from fastapi import FastAPI, HTTPException, Header
+from fastapi import FastAPI, HTTPException, Request, Header, Depends
 from pydantic import BaseModel
 from typing import List, Optional
+import requests
+from get_text_pdf import extract_text_from_pdf
+from get_embeddings import get_embeddings_batch, split_text
+from hash_text import hash_text
+from llm_answering import answer_question
+from pinecone_db import store_embeddings_in_pinecone, query_pinecone_for_context
+from pinecone_db import clear_pinecone_index
 from dotenv import load_dotenv
 
 # Load environment variables
