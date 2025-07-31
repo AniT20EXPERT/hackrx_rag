@@ -1,15 +1,41 @@
+print("===> Starting app import")
+
 import os
+print("Imported: os")
+
 from fastapi import FastAPI, HTTPException, Request, Header, Depends
+print("Imported: fastapi")
+
 from pydantic import BaseModel
+print("Imported: pydantic")
+
 from typing import List, Optional
+print("Imported: typing")
+
 import requests
+print("Imported: requests")
+
 from get_text_pdf import extract_text_from_pdf
+print("Imported: get_text_pdf")
+
 from get_embeddings import get_embeddings_batch, split_text
+print("Imported: get_embeddings")
+
 from hash_text import hash_text
+print("Imported: hash_text")
+
 from llm_answering import answer_question
+print("Imported: llm_answering")
+
 from pinecone_db import store_embeddings_in_pinecone, query_pinecone_for_context
+print("Imported: pinecone_db store/query")
+
 from pinecone_db import clear_pinecone_index
+print("Imported: pinecone_db clear")
+
 from dotenv import load_dotenv
+print("Imported: dotenv")
+
 
 load_dotenv()
 print("FastAPI starting up")
