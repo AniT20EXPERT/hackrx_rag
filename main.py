@@ -53,6 +53,10 @@ def verify_token(authorization: Optional[str] = Header(None)):
     return token
 
 
+@app.get("/")
+async def root():
+    return {"message": "FastAPI app is running"}
+
 @app.post("/hackrx/run")
 async def run_rag(payload: QueryRequest, token: str = Depends(verify_token)):
     print(" Function entered - run_rag")
