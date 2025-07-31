@@ -7,9 +7,9 @@ groq==0.30.0
 langchain==0.3.27
 nltk==3.9.1
 numpy>=1.26.0
-pinecone==7.3.0
-sentence-transformers==5.0.0
-PyMuPDF==1.26.3
+pinecone-client==5.0.0
+sentence-transformers==3.0.1
+PyMuPDF==1.24.5
 transformers>=4.30.0
 torch>=2.0.0
 setuptools
