@@ -1,6 +1,0 @@
-services:
-  - type: web
-    name: fastapi-docker-app
-    runtime: docker
-    plan: free
-    autoDeploy: true
